@@ -1,0 +1,84 @@
+/* Remove the default margin and padding from the body. */
+body {
+  padding: 0;
+  margin: 0;
+}
+
+/* Set map, body, and html to 100% of the screen size. */
+#map,
+body,
+html {
+  height: 100%;
+}
+
+h1 {
+  text-align: center;
+}
+
+.box {
+  float: left;
+  height: 14px;
+  width: 14px;
+  /* margin-bottom: 15px; */
+  border: 1px solid black;
+  clear: both;
+}
+
+
+
+.green {
+  background-color: rgb(153,247,69);
+}
+
+.lightgreen {
+  background-color: rgb(218,245,70);
+}
+
+.gold {
+  background-color: rgb(250,220,66);
+}
+
+.lightorange {
+  background-color: rgb(255,184,67);
+}
+
+.orange {
+  background-color: rgb(255,164,101);
+}
+
+.red {
+  background-color: rgb(255,95,102);
+}
+
+
+.legend {
+  padding: 10px;
+  font-family: Sanchez, serif;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 18px;
+  color: #555;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.legend .low {
+  color: #ec8a2e;
+}
+
+.legend .empty {
+  color: #a0353a;
+}
+
+.legend .coming-soon {
+  color: #f4ba48;
+}
+
+.legend .healthy {
+  color: #1b904f;
+}
+
+.legend .out-of-order {
+  color: #007dff;
+}
