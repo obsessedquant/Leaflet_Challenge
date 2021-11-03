@@ -22,45 +22,27 @@ function createFeatures(earthquakeData) {
     }
 
     var list_of_earthquakes = [];
-    // var list_of_coordinates = [];
     var locationz = [];
 
     // Add circles to the map.
     earthquakeData.forEach(x => {
         locationz = [];
         locationz = [x.geometry.coordinates[1], x.geometry.coordinates[0]];
-        // console.log('locationz is: ', locationz);
-        // list_of_coordinates.push([x.geometry.coordinates[1],x.geometry.coordinates[0]]);
         list_of_earthquakes.push(L.circle(locationz, {
             fillOpacity: 0.75,
             color: "black",
             weight: 0.5,
             fillColor: chooseColor(x.geometry.coordinates[2]),
-            // stroke: false,
-            // Adjust the radius.
-            // radius: Math.sqrt(countries[i].points) * 10000
             radius: x.properties.mag * 100000
         }).bindPopup(`<h3>${x.properties.place}</h3><hr><p>${new Date(x.properties.time)}</p>`));
     });
 
     console.log("list of earthquakes is: ", list_of_earthquakes);
-    // console.log("list of coordinates is: ",list_of_coordinates);
 
     var earthquakes_0 = L.layerGroup(list_of_earthquakes);
 
     return earthquakes_0
 }
-
-// function updateLegend(time, stationCount) {
-//     document.querySelector(".legend").innerHTML = [
-//       "<p>Updated: " + moment.unix(time).format("h:mm:ss A") + "</p>",
-//       "<p class='out-of-order'>Out of Order Stations: " + stationCount.OUT_OF_ORDER + "</p>",
-//       "<p class='coming-soon'>Stations Coming Soon: " + stationCount.COMING_SOON + "</p>",
-//       "<p class='empty'>Empty Stations: " + stationCount.EMPTY + "</p>",
-//       "<p class='low'>Low Stations: " + stationCount.LOW + "</p>",
-//       "<p class='healthy'>Healthy Stations: " + stationCount.NORMAL + "</p>"
-//     ].join("");
-//   }
 
 function updateLegend() {
     console.log('updateLegend called')
@@ -87,6 +69,35 @@ function createMap(earthquakes) {
         attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
     });
 
+    // Use this link to get the GeoJSON data.
+    var tectonic_plates = "GeoJSON/PB2002_boundaries.json";
+
+    // Getting our GeoJSON data
+    function getTectonic(tectonic_plates) {
+        d3.json(tectonic_plates).then(function (data) {
+            var tect_plates = L.geoJson(data);
+            console.log("tect_plates is: ", tect_plates);
+            tect_plates.addTo(myMap);
+            return tect_plates
+        })
+    }
+
+    var tect_platez = getTectonic(tectonic_plates);
+
+    var layers = {
+        quakes: new L.LayerGroup(earthquakes),
+        plates: new L.LayerGroup(tect_platez)
+    }
+
+    // Create our map, giving it the streetmap and earthquakes layers to display on load.
+    var myMap = L.map("map", {
+        center: [15.5994, -28.6731],
+        zoom: 3,
+        layers: [layers.quakes, layers.plates, street, earthquakes]
+    });
+
+    street.addTo(myMap);
+
     // Create a baseMaps object.
     var baseMaps = {
         "Street Map": street,
@@ -96,19 +107,14 @@ function createMap(earthquakes) {
     // Create an overlay object to hold our overlay.
     var overlayMaps = {
         "Earthquakes": earthquakes
+        // "Earthquakes": layers.quakes
+        // "Tectonic Plates": layers.plates
     };
-
-    // Create our map, giving it the streetmap and earthquakes layers to display on load.
-    var myMap = L.map("map", {
-        center: [15.5994, -28.6731],
-        zoom: 3,
-        layers: [street, earthquakes]
-    });
 
     var info = L.control({
         position: "bottomright"
     });
-    
+
     info.onAdd = function () {
         var div = L.DomUtil.create("div", "legend");
         return div;
