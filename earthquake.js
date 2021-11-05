@@ -2,7 +2,6 @@ var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_we
 
 
 d3.json(queryUrl).then(function (data) {
-    // Once we get a response, send the data.features object to the createFeatures function.
     console.log("data is: ", data);
     var earthquakes_1 = createFeatures(data.features);
     console.log("earthquakes_1 is: ", earthquakes_1);
@@ -55,19 +54,6 @@ function updateLegend() {
         "<div style='font-size:14px'><div class='box red'></div>&nbsp;90+</div>"
     ].join("");
 }
-function getTectonic(tectonic_plates) {
-    var ret = {};
-    d3.json(tectonic_plates).then(function (data) {
-        tect_plates = L.geoJson(data);
-        // console.log("tect_plates is: ", tect_plates);
-        Object.entries(tect_plates).forEach(([k,v])=>{
-            // console.log(k, v);
-            ret[k] = v;
-        })
-        // tect_plates.addTo(myMap);
-    })
-    return ret
-}
 
 function createMap(earthquakes) {
 
@@ -87,24 +73,11 @@ function createMap(earthquakes) {
     // Getting our GeoJSON data
     var tectonic_plates = "GeoJSON/PB2002_boundaries.json";
 
-    // var tect_platez = getTectonic(tectonic_plates);
-    // console.log("tect_plates is: ", tect_platez);
     var tect_platez = new L.LayerGroup();
-    // var layers = {
-    //     quakes: new L.LayerGroup(earthquakes),
-    //     plates: new L.LayerGroup(tect_platez)
-    // }
-
+    
     d3.json(tectonic_plates).then(function (data) {
         tect_plates = L.geoJson(data).addTo(tect_platez);
-        // console.log("tect_plates is: ", tect_plates);
-        // Object.entries(tect_plates).forEach(([k,v])=>{
-        //     // console.log(k, v);
-        //     ret[k] = v;
-        // })
-        // tect_plates.addTo(myMap);
     })
-
 
     // Create our map, giving it the streetmap and earthquakes layers to display on load.
     var myMap = L.map("map", {
@@ -124,7 +97,6 @@ function createMap(earthquakes) {
     // Create an overlay object to hold our overlay.
     var overlayMaps = {
         "Earthquakes": earthquakes,
-        //"Earthquakes": layers.quakes,
         "Tectonic Plates": tect_platez
     };
 
